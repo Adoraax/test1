@@ -9,9 +9,9 @@ int main(int argc, char * argv[])
     sf:: RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
     window.setFramerateLimit(60);   //setting max frames at 60fps
     //make a shape
-    int r = 0;          //specify color using rgb values
-    int g = 255;
-    int b = 100;
+    int r = 255;          //specify color using rgb values
+    int g = 0;
+    int b = 0;
 
     sf::CircleShape circle(50);
     circle.setFillColor(sf::Color(r,g,b));
