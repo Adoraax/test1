@@ -1,0 +1,11 @@
+#SFML Project Template
+
+#main.cpp stored in ./src/main
+#main.o stored in ./obj/main
+#main.exe stored in ./bin/main
+
+#run make in ./temp/ directory to compile
+#./bin/main to run main.exe
+#Makefile supports both macos and windows OS
+
+#CREATE include AND lib FOLDERS
