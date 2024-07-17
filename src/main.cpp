@@ -2,6 +2,61 @@
 #include <iostream>
 #include <filesystem>
 #include <memory>
+#include <vector>
+
+class AssignmentShape
+{
+private:
+    sf::CircleShape circle;
+    sf::RectangleShape rect;
+    float speedX;
+    float speedY;
+    bool isCircle;
+
+public:
+
+    AssignmentShape(float circleRadius, const sf::Vector2f position, float speedX, float speedY)
+        : speedX(speedX), speedY(speedY), isCircle(true)
+        {
+        circle.setRadius(circleRadius);
+        circle.setFillColor(sf::Color::Red);
+        circle.setPosition(position);
+        }
+
+    AssignmentShape(const sf::Vector2f& rectSize, const sf::Vector2f position, float speedX, float speedY)
+        : speedX(speedX), speedY(speedY), isCircle(false)
+        {
+        rect.setSize(rectSize);
+        rect.setFillColor(sf::Color::Blue);
+        rect.setPosition(position);
+        }
+
+    void AssignmentShape::draw(sf::RenderWindow& window)
+        {
+            if (isCircle)
+            {
+                window.draw(circle);
+            }
+            else
+            {
+                window.draw(rect);
+            }
+        }
+
+        // Update the shape's position
+    void AssignmentShape::update()
+        {
+            if (isCircle)
+            {
+                circle.move(speedX, speedY);
+            }
+            else
+            {
+                rect.move(speedX, speedY);
+            }
+        }
+
+};
 
 int main(int argc, char *argv[])
 {
@@ -14,28 +69,7 @@ int main(int argc, char *argv[])
     sf::RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
     window.setFramerateLimit(60);   // Setting max frames at 60fps
 
-    // Make a shape
-    int r = 255;          // Specify color using RGB values
-    int g = 0;
-    int b = 0;
-
-    //shapes
-    sf::CircleShape circle(50);
-    circle.setFillColor(sf::Color(r, g, b));
-    circle.setPosition(300.0f, 300.0f);
-    float circleMoveSpeed = 0.5f;
-
-    /*
-    float rx = 100;
-    float ry = 50;
-    sf::Vector2f rSize(rx, ry);
-    sf::RectangleShape rect(rSize);
-    rect.setFillColor(sf::Color::Blue);
-    rect.setPosition(200.0f, 200.0f);
-    float rectMoveSpeed = 1.0f;
-    rect.rotate(0.1);
-    */
-
+/*
     std::vector<sf::RectangleShape> rectangles;
     std::vector<sf::CircleShape> circles;
 
@@ -48,6 +82,9 @@ int main(int argc, char *argv[])
     shapes.push_back(circ);
 
     shapes.push_back(rect);
+*/
+
+
 
     // Text - fonts
     sf::Font myFont;
@@ -62,22 +99,13 @@ int main(int argc, char *argv[])
     sf::Text text("Sample text", myFont, 24);
     text.setPosition(0, wHeight - (float)text.getCharacterSize());
 
-    /*//loading shapes from file ?
-    std::vector<sf::CircleShape> circles;
-    circles.push_back(circle);
-    std::vector<sf::RectangleShape> rectangles;
-    //rectangles.push_back(rect);
-    for (int x = 0; x < 25; x++)
-    {
-        for (int y = 0; y < 15; y++)
-        {
-            sf::RectangleShape rect(sf::Vector2f(15, 15));
-            rect.setFillColor(sf::Color(x * 10, y * 10, 0));
-            rect.setPosition(x *20, y * 20);
-            rectangles.push_back(rect);
-        }
-    }
-    */
+
+    //Create and initiazlize shapes
+    //std::vector<std::shared_ptr<AssignmentShape>> shapes;
+    std::vector<AssignmentShape> shapes;
+    shapes.emplace_back(50.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);
+    shapes.emplace_back(sf::Vector2f(40,60), sf::Vector2f(40,60), 0.5f, -0.5f);
+
 
     // Main loop - continues for each frame while window is open
     while (window.isOpen())
@@ -96,36 +124,23 @@ int main(int argc, char *argv[])
 
                 if (event.key.code == sf::Keyboard::X)
                 {
-                    circleMoveSpeed *= -1.0f;
+                    //circleMoveSpeed *= -1.0f;
+                    window.close();
                 }
             }
         }
 
-        //circle.setPosition(circle.getPosition().x + circleMoveSpeed, circle.getPosition().y - circleMoveSpeed);
-        //rect.setPosition(rect.getPosition().x - rectMoveSpeed, rect.getPosition().y - rectMoveSpeed);
-        //rect.rotate(1.0);
-
+        for (auto& shape : shapes)
+        {
+            shape.update();
+        }
+        
         window.clear();
-        //window.draw(circle);
-        //window.draw(rect);
-
-        /*
-        for (auto& circle : circles)
-        {
-            window.draw(circle);
-        }
-
-        for (auto& rect : rectangles)
-        {
-            window.draw(rect);
-        }
-        */
         window.draw(text);
-
 
         for (auto& shape : shapes)
         {
-            window.draw(*shape);
+            shape.draw(window);
         }
 
         window.display();
