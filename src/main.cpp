@@ -4,145 +4,133 @@
 #include <memory>
 #include <vector>
 
+// Class to handle shapes (circle and rectangle) and their movement
 class AssignmentShape
 {
-private:
-    sf::CircleShape circle;
-    sf::RectangleShape rect;
-    float speedX;
-    float speedY;
-    bool isCircle;
-
 public:
-
-    AssignmentShape(float circleRadius, const sf::Vector2f position, float speedX, float speedY)
-        : speedX(speedX), speedY(speedY), isCircle(true)
+    // Constructor to initialize shapes with parameters
+    AssignmentShape(float circleRadius, const sf::Vector2f& rectSize, const sf::Vector2f& position, float speedX, float speedY, bool isCircle)
+        : speedX(speedX), speedY(speedY), isCircle(isCircle)
+    {
+        // Initialize shapes based on the specified type
+        if (isCircle)
         {
-        circle.setRadius(circleRadius);
-        circle.setFillColor(sf::Color::Red);
-        circle.setPosition(position);
+            circle.setRadius(circleRadius);
+            circle.setFillColor(sf::Color::Red);
+            circle.setPosition(position);
         }
-
-    AssignmentShape(const sf::Vector2f& rectSize, const sf::Vector2f position, float speedX, float speedY)
-        : speedX(speedX), speedY(speedY), isCircle(false)
+        else
         {
-        rect.setSize(rectSize);
-        rect.setFillColor(sf::Color::Blue);
-        rect.setPosition(position);
+            rect.setSize(rectSize);
+            rect.setFillColor(sf::Color::Blue);
+            rect.setPosition(position);
         }
+    }
 
-    void AssignmentShape::draw(sf::RenderWindow& window)
-        {
-            if (isCircle)
-            {
-                window.draw(circle);
-            }
-            else
-            {
-                window.draw(rect);
-            }
-        }
+    // Update shape positions based on their speed
+    void update()
+    {
+        if (isCircle)
+            circle.move(speedX, speedY);
+        else
+            rect.move(speedX, speedY);
+    }
 
-        // Update the shape's position
-    void AssignmentShape::update()
-        {
-            if (isCircle)
-            {
-                circle.move(speedX, speedY);
-            }
-            else
-            {
-                rect.move(speedX, speedY);
-            }
-        }
+    // Draw shapes to the provided window
+    void draw(sf::RenderWindow& window)
+    {
+        if (isCircle)
+            window.draw(circle);
+        else
+            window.draw(rect);
+    }
 
+private:
+    sf::CircleShape circle;     // Circle shape
+    sf::RectangleShape rect;    // Rectangle shape
+    float speedX, speedY;       // Speed of movement in X and Y directions
+    bool isCircle;              // Flag to determine the type of shape
 };
 
-int main(int argc, char *argv[])
+// Function to create and add a circle to the list of shapes
+void addCircle(std::vector<std::shared_ptr<AssignmentShape>>& shapes, float radius, const sf::Vector2f& position, float speedX, float speedY)
 {
-    // Print working directory
+    shapes.push_back(std::make_shared<AssignmentShape>(radius, sf::Vector2f(0, 0), position, speedX, speedY, true));
+}
+
+// Function to create and add a rectangle to the list of shapes
+void addRectangle(std::vector<std::shared_ptr<AssignmentShape>>& shapes, const sf::Vector2f& size, const sf::Vector2f& position, float speedX, float speedY)
+{
+    shapes.push_back(std::make_shared<AssignmentShape>(0, size, position, speedX, speedY, false));
+}
+
+int main(int argc, char* argv[])
+{
+    // Print current working directory
     std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
 
-    // Create new window
+    // Create new window with specified dimensions
     const int wWidth = 1280;
     const int wHeight = 720;
     sf::RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
-    window.setFramerateLimit(60);   // Setting max frames at 60fps
+    window.setFramerateLimit(60); // Setting max frames at 60fps
 
-/*
-    std::vector<sf::RectangleShape> rectangles;
-    std::vector<sf::CircleShape> circles;
-
-    std::vector<std::shared_ptr<sf::Shape>> shapes;
-
-    std::shared_ptr<sf::Shape> circ = std::make_shared<sf::CircleShape>(20);
-    std::shared_ptr<sf::Shape> rect = std::make_shared<sf::RectangleShape>(sf::Vector2f(40,60));
-    rect->setPosition(400,400);
-
-    shapes.push_back(circ);
-
-    shapes.push_back(rect);
-*/
-
-
-
-    // Text - fonts
+    // Load font for text display
     sf::Font myFont;
-    std::string fontPath = "assets/fonts/Gondola_SD.ttf"; // Adjusted path
+    std::string fontPath = "assets/fonts/Gondola_SD.ttf"; // Adjusted path to the font file
 
+    // Check if the font loads successfully
     if (!myFont.loadFromFile(fontPath))
     {
         std::cerr << "Could not load font: " << fontPath << "\n";
         exit(-1);
     }
 
+    // Create text object with loaded font
     sf::Text text("Sample text", myFont, 24);
-    text.setPosition(0, wHeight - (float)text.getCharacterSize());
+    text.setPosition(0, wHeight - static_cast<float>(text.getCharacterSize()));
 
-
-    //Create and initiazlize shapes
-    //std::vector<std::shared_ptr<AssignmentShape>> shapes;
-    std::vector<AssignmentShape> shapes;
-    shapes.emplace_back(50.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);
-    shapes.emplace_back(sf::Vector2f(40,60), sf::Vector2f(40,60), 0.5f, -0.5f);
-
+    // Create and initialize shapes
+    std::vector<std::shared_ptr<AssignmentShape>> shapes;
+    addCircle(shapes, 20.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);  // Adding a circle
+    addRectangle(shapes, sf::Vector2f(40.0f, 60.0f), sf::Vector2f(400.0f, 400.0f), -0.5f, -0.5f); // Adding a rectangle
 
     // Main loop - continues for each frame while window is open
     while (window.isOpen())
     {
         sf::Event event;
+        // Poll and handle events
         while (window.pollEvent(event))
         {
+            // Close window if the close event is triggered
             if (event.type == sf::Event::Closed)
             {
                 window.close();
             }
 
+            // Handle key press events
             if (event.type == sf::Event::KeyPressed)
             {
                 std::cout << "Key pressed with code = " << event.key.code << "\n";
-
-                if (event.key.code == sf::Keyboard::X)
-                {
-                    //circleMoveSpeed *= -1.0f;
-                    window.close();
-                }
             }
         }
 
+        // Update all shapes
         for (auto& shape : shapes)
         {
-            shape.update();
+            shape->update();
         }
-        
+
+        // Clear the window and draw updated shapes
         window.clear();
         window.draw(text);
 
         for (auto& shape : shapes)
         {
-            shape.draw(window);
+            shape->draw(window);
         }
 
+        // Display the updated content on the window
         window.display();
     }
 
