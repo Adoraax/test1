@@ -82,8 +82,8 @@ int main(int argc, char* argv[])
     std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
 
     // Create new window with specified dimensions
-    const int wWidth = 1280;
-    const int wHeight = 720;
+    const int wWidth = 3640;
+    const int wHeight = 1080;
     sf::RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
     sf::Vector2u windowSize = window.getSize();
     float centerX = windowSize.x / 2.0f;
