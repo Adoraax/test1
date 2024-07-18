@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
+#include <random>
+#include <ctime>
 
 // Class to handle shapes (circle and rectangle) and their movement
 class AssignmentShape
@@ -15,14 +17,20 @@ public:
         // Initialize shapes based on the specified type
         if (isCircle)
         {
+            int r = (1+ rand() % 255);
+            int g = (1+ rand() % 255);
+            int b = (1+ rand() % 255);
             circle.setRadius(circleRadius);
-            circle.setFillColor(sf::Color::Red);
+            circle.setFillColor(sf::Color(r,g,b));
             circle.setPosition(position);
         }
         else
         {
+            int r = (1+ rand() % 255);
+            int g = (1+ rand() % 255);
+            int b = (1+ rand() % 255);
             rect.setSize(rectSize);
-            rect.setFillColor(sf::Color::Blue);
+            rect.setFillColor(sf::Color(r,g,b));
             rect.setPosition(position);
         }
     }
@@ -50,6 +58,10 @@ private:
     sf::RectangleShape rect;    // Rectangle shape
     float speedX, speedY;       // Speed of movement in X and Y directions
     bool isCircle;              // Flag to determine the type of shape
+    int r;
+    int g;
+    int b;
+
 };
 
 // Function to create and add a circle to the list of shapes
@@ -73,6 +85,9 @@ int main(int argc, char* argv[])
     const int wWidth = 1280;
     const int wHeight = 720;
     sf::RenderWindow window(sf::VideoMode(wWidth, wHeight), "SFML works!");
+    sf::Vector2u windowSize = window.getSize();
+    float centerX = windowSize.x / 2.0f;
+    float centerY = windowSize.y / 2.0f;
     window.setFramerateLimit(60); // Setting max frames at 60fps
 
     // Load font for text display
@@ -90,10 +105,26 @@ int main(int argc, char* argv[])
     sf::Text text("Sample text", myFont, 24);
     text.setPosition(0, wHeight - static_cast<float>(text.getCharacterSize()));
 
-    // Create and initialize shapes
+    // Create and initialize shapes with random paramter values for position and speed
     std::vector<std::shared_ptr<AssignmentShape>> shapes;
-    addCircle(shapes, 20.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);  // Adding a circle
-    addRectangle(shapes, sf::Vector2f(40.0f, 60.0f), sf::Vector2f(400.0f, 400.0f), -0.5f, -0.5f); // Adding a rectangle
+    srand(static_cast<unsigned int>(time(nullptr))); 
+    for (int i = shapes.size(); i < (1+ rand() % 10); i++)
+    {
+        float randX = static_cast<float>(0.0f + (rand() % wWidth));
+        float randY = static_cast<float>(0.0f + (rand() % wHeight));
+
+        float centreScreenX = static_cast<float>(wWidth/2);
+        float centreScreenY = static_cast<float>(wHeight/2);
+
+        float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+
+        float randRadius = static_cast<float>(rand() % 100 + 20);
+
+        addCircle(shapes, randRadius, sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
+    }
+    //addCircle(shapes, 20.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);  // Adding a circle
+    //addRectangle(shapes, sf::Vector2f(40.0f, 60.0f), sf::Vector2f(400.0f, 400.0f), -0.5f, -0.5f); // Adding a rectangle
 
     // Main loop - continues for each frame while window is open
     while (window.isOpen())
