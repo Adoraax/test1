@@ -108,7 +108,57 @@ int main(int argc, char* argv[])
     // Create and initialize shapes with random paramter values for position and speed
     std::vector<std::shared_ptr<AssignmentShape>> shapes;
     srand(static_cast<unsigned int>(time(nullptr))); 
-    for (int i = shapes.size(); i < (1+ rand() % 10); i++)
+    int rNumShapes;
+    int rNumCircles;
+    int rNumRectangles;
+    rNumShapes = (1+ rand() % 100);
+    std::cout << "Number of shapes = " << rNumShapes << "\n";
+    rNumCircles = (1+ rand() % rNumShapes);
+    std::cout << "Number of circles = " << rNumCircles << "\n";
+    rNumRectangles = rNumShapes - rNumCircles;
+    std::cout << "Number of rectangles = " << rNumRectangles << "\n";
+
+    /*
+    for (int i = shapes.size(); i < rNumShapes; i++)
+    {
+        //int rNumCircles;   
+        for (int i = 0; i < rNumCircles; i++)
+        {
+            float randX = static_cast<float>(0.0f + (rand() % wWidth));
+            float randY = static_cast<float>(0.0f + (rand() % wHeight));
+
+            float centreScreenX = static_cast<float>(wWidth/2);
+            float centreScreenY = static_cast<float>(wHeight/2);
+
+            float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+            float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+
+            float randRadius = static_cast<float>(rand() % 100 + 20);
+
+            addCircle(shapes, randRadius, sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
+        }
+        //int rNumRectangles;
+        for (int i = 0; i < rNumRectangles; i++)
+        {
+            float randX = static_cast<float>(0.0f + (rand() % wWidth));
+            float randY = static_cast<float>(0.0f + (rand() % wHeight));
+
+            float centreScreenX = static_cast<float>(wWidth/2);
+            float centreScreenY = static_cast<float>(wHeight/2);
+
+            float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+            float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+
+            float randXSize = static_cast<float>(40 + rand() % 120);
+            float randYSize = static_cast<float>(40 + rand() % 120);
+
+
+            addRectangle(shapes, sf::Vector2f(randXSize, randYSize), sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
+        }
+    }
+    */
+        //int rNumCircles;   
+    for (int i = 0; i < rNumCircles; i++)
     {
         float randX = static_cast<float>(0.0f + (rand() % wWidth));
         float randY = static_cast<float>(0.0f + (rand() % wHeight));
@@ -123,6 +173,26 @@ int main(int argc, char* argv[])
 
         addCircle(shapes, randRadius, sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
     }
+
+        //int rNumRectangles;
+    for (int i = 0; i < rNumRectangles; i++)
+        {
+        float randX = static_cast<float>(0.0f + (rand() % wWidth));
+        float randY = static_cast<float>(0.0f + (rand() % wHeight));
+
+        float centreScreenX = static_cast<float>(wWidth/2);
+        float centreScreenY = static_cast<float>(wHeight/2);
+
+        float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+
+        float randXSize = static_cast<float>(40 + rand() % 120);
+        float randYSize = static_cast<float>(40 + rand() % 120);
+
+
+        addRectangle(shapes, sf::Vector2f(randXSize, randYSize), sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
+    }
+
     //addCircle(shapes, 20.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);  // Adding a circle
     //addRectangle(shapes, sf::Vector2f(40.0f, 60.0f), sf::Vector2f(400.0f, 400.0f), -0.5f, -0.5f); // Adding a rectangle
 
