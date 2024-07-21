@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include <cstdlib>
 
 // Class to handle shapes (circle and rectangle) and their movement
 class AssignmentShape
@@ -53,9 +54,28 @@ public:
             window.draw(rect);
     }
 
-private:
+    bool getIsCircle()
+    {
+        return isCircle;
+    }
+
+    // Function to generate a random negative number between -1.0 and 0.0
+    static float randomNegNumber()
+    {
+        return -static_cast<float>((rand()) / static_cast<float>(RAND_MAX/2) + 1);
+    }
+
+    // Function to generate a random positive number between 0.0 and 1.0
+    static float randomPosNumber()
+    {
+        return static_cast<float>((rand()) / static_cast<float>(RAND_MAX/2)+ 1);
+    }
+
+public:
     sf::CircleShape circle;     // Circle shape
     sf::RectangleShape rect;    // Rectangle shape
+    sf::Vector2f circlePos;
+    float circleRadius;
     float speedX, speedY;       // Speed of movement in X and Y directions
     bool isCircle;              // Flag to determine the type of shape
     int r;
@@ -118,6 +138,10 @@ int main(int argc, char* argv[])
     rNumRectangles = rNumShapes - rNumCircles;
     std::cout << "Number of rectangles = " << rNumRectangles << "\n";
 
+    std::cout << "Random Negative Number = " << AssignmentShape::randomNegNumber() << "\n";
+    std::cout << "Random Negative Number = " << AssignmentShape::randomPosNumber() << "\n";
+
+
     /*
     for (int i = shapes.size(); i < rNumShapes; i++)
     {
@@ -166,10 +190,12 @@ int main(int argc, char* argv[])
         float centreScreenX = static_cast<float>(wWidth/2);
         float centreScreenY = static_cast<float>(wHeight/2);
 
-        float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
-        float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        float randSpeedX = -2.5f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        float randSpeedY = -2.5f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
 
         float randRadius = static_cast<float>(rand() % 100 + 20);
+
+        //float circleMoveSpeed = (randX, randY);
 
         addCircle(shapes, randRadius, sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
     }
@@ -183,8 +209,13 @@ int main(int argc, char* argv[])
         float centreScreenX = static_cast<float>(wWidth/2);
         float centreScreenY = static_cast<float>(wHeight/2);
 
-        float randSpeedX = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
-        float randSpeedY = -1.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        float randSpeedX = AssignmentShape::randomNegNumber() + static_cast<float>(rand() / (RAND_MAX));
+        float randSpeedY = AssignmentShape::randomNegNumber() + static_cast<float>(rand() / (RAND_MAX));
+
+        //float randSpeedX = -2.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        //float randSpeedY = -2.0f + static_cast<float>(rand() / (RAND_MAX / 2.0f));
+        std::cout << "Speed of Circle X = " << randSpeedX << "\n";
+        std::cout << "Speed of Circle Y = " << randSpeedY << "\n";
 
         float randXSize = static_cast<float>(40 + rand() % 120);
         float randYSize = static_cast<float>(40 + rand() % 120);
@@ -192,9 +223,6 @@ int main(int argc, char* argv[])
 
         addRectangle(shapes, sf::Vector2f(randXSize, randYSize), sf::Vector2f(randX, randY), randSpeedX, randSpeedY);
     }
-
-    //addCircle(shapes, 20.0f, sf::Vector2f(300.0f, 300.0f), 0.5f, 0.5f);  // Adding a circle
-    //addRectangle(shapes, sf::Vector2f(40.0f, 60.0f), sf::Vector2f(400.0f, 400.0f), -0.5f, -0.5f); // Adding a rectangle
 
     // Main loop - continues for each frame while window is open
     while (window.isOpen())
@@ -216,10 +244,47 @@ int main(int argc, char* argv[])
             }
         }
 
+        //circle.setPosition(Circle.getPosition().x - circleMoveSpeed, circle.getPosition().y - circleMoveSpeed);
+
         // Update all shapes
         for (auto& shape : shapes)
         {
             shape->update();
+
+            //bouncy bouncy 
+            if (shape -> getIsCircle())
+            {
+                sf::Vector2f circlePos = shape->circle.getPosition();
+                float circleRadius = shape->circle.getRadius();
+                sf::Vector2f circleSize(circleRadius * 2, circleRadius*2);
+
+                if (circlePos.x <= 0 || (circlePos.x + circleSize.x) >= wWidth)
+                {
+                    shape->speedX = shape->speedX * -1;
+                }
+
+                if (circlePos.y <= 0 || (circlePos.y + circleSize.y) >= wHeight)
+                {
+                    shape->speedY = shape->speedY * -1;
+                }
+            } else 
+            {
+                sf::Vector2f rectPos = shape->rect.getPosition();
+                sf::Vector2f rectSize = shape->rect.getSize();
+                sf::Vector2f rectDeimsions(rectSize.x, rectSize.y);
+
+                if (rectPos.x <= 0 || (rectPos.x + rectSize.x) >= wWidth)
+                {
+                    shape->speedX = shape->speedX * -1;
+                }
+                
+                if (rectPos.y <= 0 || (rectPos.y + rectSize.y) >= wHeight)
+                {
+                    shape->speedY = shape->speedY * -1;
+                }
+
+            }
+
         }
 
         // Clear the window and draw updated shapes
